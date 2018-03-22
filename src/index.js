@@ -98,11 +98,19 @@ let styles = StyleSheet.create({
     color: '#007aff',
     fontFamily: 'Arial',
   },
+
+  scrollView: Platform.select({
+    web: {
+      overflowX: 'hidden',
+      overflowY: 'hidden'
+    },
+    default: {}
+  })
 })
 
 // missing `module.exports = exports['default'];` with babel6
 // export default React.createClass({
-module.exports = createReactClass({
+export default createReactClass({
 
   /**
    * Props Validation
@@ -352,8 +360,8 @@ module.exports = createReactClass({
       autoplayEnd: false,
     })
 
-    // trigger onScrollEnd manually in android
-    if (Platform.OS === 'android') {
+    // trigger onScrollEnd manually in android and web
+    if (Platform.OS !== 'ios') {
       this.setTimeout(() => {
         this.onScrollEnd({
           nativeEvent: {
@@ -464,20 +472,7 @@ module.exports = createReactClass({
     )
   },
   renderScrollView(pages) {
-     if (Platform.OS === 'ios')
-         return (
-            <ScrollView ref="scrollView"
-             {...this.props}
-                       contentContainerStyle={[styles.wrapper, this.props.style]}
-                       contentOffset={this.state.offset}
-                       onScrollBeginDrag={this.onScrollBegin}
-                       onMomentumScrollEnd={this.onScrollEnd}
-                       onScroll={this.onScroll}
-                       scrollEventThrottle={16}
-                       >
-             {pages}
-            </ScrollView>
-         );
+    if (Platform.OS === 'android')
       return (
          <ViewPagerAndroid ref="scrollView"
           {...this.props}
@@ -489,6 +484,22 @@ module.exports = createReactClass({
             {pages}
          </ViewPagerAndroid>
       );
+
+    const { style, ...scrollViewProps } = this.props
+    return (
+      <ScrollView ref="scrollView"
+       {...scrollViewProps}
+                 contentContainerStyle={[styles.wrapper, this.props.style]}
+                 contentOffset={this.state.offset}
+                 onScrollBeginDrag={this.onScrollBegin}
+                 onMomentumScrollEnd={this.onScrollEnd}
+                 onScroll={this.onScroll}
+                 scrollEventThrottle={16}
+                 style={[styles.scrollView, style]}
+                 >
+       {pages}
+      </ScrollView>
+    );
   },
   /**
    * Inject state to ScrollResponder

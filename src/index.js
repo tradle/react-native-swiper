@@ -13,7 +13,6 @@ import ReactNative, {
   ScrollView,
   Dimensions,
   TouchableOpacity,
-  ViewPagerAndroid,
   Platform
 } from 'react-native'
 
@@ -472,7 +471,8 @@ export default createReactClass({
     )
   },
   renderScrollView(pages) {
-    if (Platform.OS === 'android')
+    if (Platform.OS === 'android') {
+      const ViewPagerAndroid = this.props.component
       return (
          <ViewPagerAndroid ref="scrollView"
           {...this.props}
@@ -484,7 +484,7 @@ export default createReactClass({
             {pages}
          </ViewPagerAndroid>
       );
-
+    }
     const { style, ...scrollViewProps } = this.props
     return (
       <ScrollView ref="scrollView"

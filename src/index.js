@@ -516,6 +516,8 @@ export default createReactClass({
     ]*/
 
     for(let prop in props) {
+      if (prop === 'component') continue
+
       // if(~scrollResponders.indexOf(prop)
       if(typeof props[prop] === 'function'
         && prop !== 'onMomentumScrollEnd'
